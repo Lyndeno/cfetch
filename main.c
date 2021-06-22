@@ -35,11 +35,11 @@ char *format_time(long uptime_seconds) {
 		sprintf(buffer, "%ld seconds", uptime_seconds);
 	} else if (uptime_seconds >= 60 && uptime_seconds < 3600) {
 		float uptime_minutes = (float)uptime_seconds / 60;
-		sprintf(buffer, "%f minutes", uptime_minutes);
+		sprintf(buffer, "%.2f minutes", uptime_minutes);
 	}
 	else {
 		float uptime_hours = (float)uptime_seconds / 3600;
-		sprintf(buffer, "%f hours", uptime_hours);
+		sprintf(buffer, "%.2f hours", uptime_hours);
 	}
 	return buffer;
 }
