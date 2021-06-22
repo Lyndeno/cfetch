@@ -29,6 +29,7 @@ int main(void) {
 }
 
 char *format_time(long uptime_seconds) {
+	// TODO: Round numbers to get hybrid readings eg. 2 minutes 5 seconds
 	char *buffer;
 	buffer = (char *)malloc(50*sizeof(char));
 	if (uptime_seconds < 60) {
