@@ -30,6 +30,7 @@ int main(void) {
 
 char *format_time(long uptime_seconds) {
 	// TODO: Round numbers to get hybrid readings eg. 2 minutes 5 seconds
+	// TODO: Move buffer allocation out of this function, we don't want memory leaks later
 	char *buffer;
 	buffer = (char *)malloc(50*sizeof(char));
 	if (uptime_seconds < 60) {
