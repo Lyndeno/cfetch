@@ -4,6 +4,7 @@
 #include <sys/sysinfo.h>
 #include <unistd.h>
 #include <math.h>
+#include <string.h>
 
 #define SEPARATOR ": "
 #define CONTENT_MAX 64 // TODO: Implement dynamic string allocation for muh minimal resource usage
@@ -22,6 +23,7 @@ void free_fetchline(fetchline *);
 void append_fetchline(fetchline *list_element, fetchline *new_fetchline);
 void print_fetch(fetchline *list_element);
 void free_fetchlist(fetchline *list_start);
+void align_fetchlist(fetchline *list_start);
 
 int main(void) {
 	fetchline *list_start;
@@ -46,6 +48,8 @@ int main(void) {
 	sprintf(fetch_uptime->title, " Uptime");
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
+
+	align_fetchlist(list_start);
 	print_fetch(list_start);
 
 	free_fetchlist(list_start);
@@ -104,5 +108,38 @@ void free_fetchlist(fetchline *list_start) {
 		next_fetchline = list_start->next;
 		free_fetchline(list_start);
 		list_start = next_fetchline;
+	}
+}
+
+// TODO: Currently no checking for lengths, could possibly end up with strings too long and have bad things happen
+void align_fetchlist(fetchline *list_start) {
+	fetchline *current_line = list_start;
+	size_t max_length = 0;
+	size_t current_length;
+	char buffer[TITLE_MAX];
+	char padding[TITLE_MAX];
+
+	while (current_line != NULL) {
+		current_length = strlen(current_line->title);
+		if (current_length > max_length) {
+			max_length = current_length;
+		}
+		current_line = current_line->next;
+	}
+	current_line = list_start;
+	while (current_line != NULL) {
+		current_length = strlen(current_line->title);
+		if (current_length < max_length) {
+			for (size_t i = 0; i <= max_length - current_length; i++) {
+				if (i == max_length - current_length) {
+					padding[i] = '\0';
+				} else {
+					padding[i] = ' ';
+				}
+			}
+			strcpy(buffer, current_line->title);
+			sprintf(current_line->title, "%s%s", padding, buffer);
+		}
+		current_line = current_line->next;
 	}
 }
