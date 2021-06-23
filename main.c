@@ -23,25 +23,24 @@ int main(void) {
 	//printf(" Uptime: %ld\n", machine_info.uptime);
 	printf(" Uptime: %s\n", format_time(machine_info.uptime));
 	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo
-	//printf("Buffer ram: %f\n", (machine_info.bufferram) / powf(1024,3));
-	//printf("mem unit: %u", machine_info.mem_unit);
-	//printf("RAM: %f / %f\n", (float)(machine_info.totalram - machine_info.freeram - machine_info.bufferram) / powf(1024,3), (float)machine_info.totalram / powf(1024,3));
 }
 
 char *format_time(long uptime_seconds) {
-	// TODO: Round numbers to get hybrid readings eg. 2 minutes 5 seconds
 	// TODO: Move buffer allocation out of this function, we don't want memory leaks later
 	char *buffer;
 	buffer = (char *)malloc(50*sizeof(char));
 	if (uptime_seconds < 60) {
 		sprintf(buffer, "%ld seconds", uptime_seconds);
 	} else if (uptime_seconds >= 60 && uptime_seconds < 3600) {
-		float uptime_minutes = (float)uptime_seconds / 60;
-		sprintf(buffer, "%.2f minutes", uptime_minutes);
+		long uptime_minutes = uptime_seconds / 60;
+		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*60;
+		sprintf(buffer, "%ld minutes, %ld seconds", uptime_minutes, uptime_remaining_seconds);
 	}
 	else {
-		float uptime_hours = (float)uptime_seconds / 3600;
-		sprintf(buffer, "%.2f hours", uptime_hours);
+		long uptime_hours = uptime_seconds / 3600;
+		long uptime_minutes = (uptime_seconds - uptime_hours*3600)/60;
+		long uptime_remaining_seconds = uptime_seconds - uptime_hours*3600 - uptime_minutes*60; 
+		sprintf(buffer, "%ld hours, %ld minutes, %ld seconds", uptime_hours, uptime_minutes, uptime_remaining_seconds);
 	}
 	return buffer;
 }
