@@ -31,14 +31,12 @@ int main(void) {
 	uname(&local_machine);
 	sprintf(fetch_kernel->title, " Kernel");
 	sprintf(fetch_kernel->content,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
-	//printf(" Kernel: %s %s %s\n", local_machine.sysname, local_machine.release, local_machine.machine);
 
 	fetchline *fetch_hostname = init_fetchline();
 	char hostname[CONTENT_MAX+1];
 	gethostname(hostname, CONTENT_MAX+ 1);
 	sprintf(fetch_hostname->title, " Host");
 	sprintf(fetch_hostname->content, "%s", hostname);
-	//printf("   Host: %s\n",hostname);
 	append_fetchline(list_start, fetch_hostname);
 
 	struct sysinfo machine_info;
@@ -47,14 +45,8 @@ int main(void) {
 	sprintf(fetch_uptime->title, " Uptime");
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
-	//printf(" Uptime: %ld\n", machine_info.uptime);
-	//char *uptime_buffer;
-	//uptime_buffer = (char *)malloc(50*sizeof(char));
-	//format_time(uptime_buffer, machine_info.uptime);
-	//printf(" Uptime: %s\n", uptime_buffer); 
-	//free(uptime_buffer);
-	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo
 	print_fetch(list_start);
+	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo
 }
 
 void print_fetch(fetchline *list_element) {
