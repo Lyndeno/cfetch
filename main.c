@@ -9,10 +9,12 @@
 #define SEPARATOR ": "
 #define CONTENT_MAX 64 // TODO: Implement dynamic string allocation for muh minimal resource usage
 #define TITLE_MAX 32
+#define ICON_MAX 8 // TODO: I have no idea how bytes glyphs like fontawesome and nerdfonts are
 
 void format_time(char *, long);
 
 typedef struct fetchline {
+	char *icon;
 	char *title;
 	char *content;
 	struct fetchline *next;
@@ -32,20 +34,23 @@ int main(void) {
 	list_start = fetch_kernel;
 	struct utsname local_machine;
 	uname(&local_machine);
-	sprintf(fetch_kernel->title, " Kernel");
+	sprintf(fetch_kernel->title, "Kernel");
+	sprintf(fetch_kernel->icon, "");
 	sprintf(fetch_kernel->content,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
 
 	fetchline *fetch_hostname = init_fetchline();
 	char hostname[CONTENT_MAX+1];
 	gethostname(hostname, CONTENT_MAX+ 1);
-	sprintf(fetch_hostname->title, " Host");
+	sprintf(fetch_hostname->title, "Host");
+	sprintf(fetch_hostname->icon, "");
 	sprintf(fetch_hostname->content, "%s", hostname);
 	append_fetchline(list_start, fetch_hostname);
 
 	struct sysinfo machine_info;
 	sysinfo(&machine_info);
 	fetchline *fetch_uptime = init_fetchline();
-	sprintf(fetch_uptime->title, " Uptime");
+	sprintf(fetch_uptime->title, "Uptime");
+	sprintf(fetch_uptime->icon, "");
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
 
@@ -58,7 +63,7 @@ int main(void) {
 
 void print_fetch(fetchline *list_element) {
 	while (list_element != NULL) {
-		printf("%s%s%s\n", list_element->title, SEPARATOR, list_element->content);
+		printf("%s %s%s%s\n", list_element->icon, list_element->title, SEPARATOR, list_element->content);
 		list_element = list_element->next;
 	}	
 }
@@ -84,6 +89,7 @@ fetchline *init_fetchline(void) {
 	fetchline *new_fetchline = (fetchline *)malloc(sizeof(fetchline));
 	new_fetchline->content = (char *)malloc(CONTENT_MAX*sizeof(char));
 	new_fetchline->title = (char *)malloc(TITLE_MAX*sizeof(char));
+	new_fetchline->icon = (char *)malloc(ICON_MAX*sizeof(char));
 	new_fetchline->next = NULL;
 
 	return new_fetchline;
