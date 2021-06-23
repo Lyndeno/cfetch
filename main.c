@@ -21,6 +21,7 @@ fetchline *init_fetchline(void);
 void free_fetchline(fetchline *);
 void append_fetchline(fetchline *list_element, fetchline *new_fetchline);
 void print_fetch(fetchline *list_element);
+void free_fetchlist(fetchline *list_start);
 
 int main(void) {
 	fetchline *list_start;
@@ -46,6 +47,8 @@ int main(void) {
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
 	print_fetch(list_start);
+
+	free_fetchlist(list_start);
 	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo
 }
 
@@ -93,4 +96,13 @@ void append_fetchline(fetchline *list_element, fetchline *new_fetchline) {
 		list_element = list_element->next;
 	}
 	list_element->next = new_fetchline;
+}
+
+void free_fetchlist(fetchline *list_start) {
+	fetchline *next_fetchline;
+	while (list_start != NULL) {
+		next_fetchline = list_start->next;
+		free_fetchline(list_start);
+		list_start = next_fetchline;
+	}
 }
