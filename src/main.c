@@ -39,6 +39,10 @@ int main(void) {
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
 
+	// Get CPU model name
+	FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
+	
+
 	align_fetchlist(list_start);
 	print_fetch(list_start);
 
