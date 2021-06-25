@@ -12,6 +12,7 @@ void format_time(char *, long);
 int main(void) {
 	fetchline *list_start;
 
+	// Get kernel information
 	fetchline *fetch_kernel = init_fetchline();
 	list_start = fetch_kernel;
 	struct utsname local_machine;
@@ -20,6 +21,7 @@ int main(void) {
 	sprintf(fetch_kernel->icon, "");
 	sprintf(fetch_kernel->content,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
 
+	// Get hostname
 	fetchline *fetch_hostname = init_fetchline();
 	char hostname[CONTENT_MAX+1];
 	gethostname(hostname, CONTENT_MAX+ 1);
@@ -28,6 +30,7 @@ int main(void) {
 	sprintf(fetch_hostname->content, "%s", hostname);
 	append_fetchline(list_start, fetch_hostname);
 
+	// Get uptime
 	struct sysinfo machine_info;
 	sysinfo(&machine_info);
 	fetchline *fetch_uptime = init_fetchline();
