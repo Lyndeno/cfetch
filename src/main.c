@@ -6,6 +6,7 @@
 #include <math.h>
 #include <string.h>
 #include "fetchline.h"
+#include <stdbool.h>
 
 void format_time(char *, long);
 
@@ -39,8 +40,27 @@ int main(void) {
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
 
-	// Get CPU model name
+	// Get CPU model
 	FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
+	char *cpuflag = 0;
+	size_t size = 0;
+	bool foundModel = false;
+	// FIXME: Somewhere in here, memory is allocated and we need to free it when done
+	while(!foundModel && getline(&cpuflag, &size, cpuinfo) != -1) {
+		if (strstr(cpuflag, "model name") != NULL) {
+			// Clean this up
+			char *cpumodel = strstr(cpuflag, ":") + 2;
+			char *cpuend = strstr(cpumodel, "\n");
+			*cpuend = '\0'; // Remove newline
+			foundModel = true;
+			fetchline *fetch_cpuname = init_fetchline();
+			sprintf(fetch_cpuname->title, "CPU");
+			sprintf(fetch_cpuname->icon, "");
+			sprintf(fetch_cpuname->content, "%s", cpumodel);
+			append_fetchline(list_start, fetch_cpuname);
+		}	
+	}
+	fclose(cpuinfo);
 	
 
 	align_fetchlist(list_start);
