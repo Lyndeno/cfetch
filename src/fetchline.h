@@ -12,7 +12,7 @@ typedef struct fetchline {
 #define TITLE_MAX 32
 #define ICON_MAX 4 // TODO: I have no idea how bytes glyphs like fontawesome and nerdfonts are
 
-fetchline *init_fetchline(void);
+fetchline *init_fetchline(char *icon, char *title, char *content);
 void free_fetchline(fetchline *);
 void append_fetchline(fetchline *list_element, fetchline *new_fetchline);
 void print_fetch(fetchline *list_element);

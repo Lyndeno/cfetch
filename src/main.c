@@ -10,48 +10,55 @@
 #include "proc.h"
 
 void format_time(char *, long);
+unsigned long kBtoMiB(unsigned long kBytes);
 
 int main(void) {
 	fetchline *list_start;
 
 	// Get kernel information
-	fetchline *fetch_kernel = init_fetchline();
+	fetchline *fetch_kernel = init_fetchline("", "Kernel", NULL);
 	list_start = fetch_kernel;
 	struct utsname local_machine;
 	uname(&local_machine);
-	sprintf(fetch_kernel->title, "Kernel");
-	sprintf(fetch_kernel->icon, "");
 	sprintf(fetch_kernel->content,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
 
 	// Get hostname
-	fetchline *fetch_hostname = init_fetchline();
 	char hostname[CONTENT_MAX+1];
 	gethostname(hostname, CONTENT_MAX+ 1);
-	sprintf(fetch_hostname->title, "Host");
-	sprintf(fetch_hostname->icon, "");
-	sprintf(fetch_hostname->content, "%s", hostname);
+	fetchline *fetch_hostname = init_fetchline("", "Host", hostname);
 	append_fetchline(list_start, fetch_hostname);
 
 	// Get uptime
 	struct sysinfo machine_info;
 	sysinfo(&machine_info);
-	fetchline *fetch_uptime = init_fetchline();
-	sprintf(fetch_uptime->title, "Uptime");
-	sprintf(fetch_uptime->icon, "");
+	fetchline *fetch_uptime = init_fetchline("", "Uptime", NULL);
 	format_time(fetch_uptime->content, machine_info.uptime);
 	append_fetchline(list_start, fetch_uptime);
 
 	// Get CPU model
 	FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
-	fetchline *fetch_cpuname = init_fetchline();
-	sprintf(fetch_cpuname->title, "CPU");
-	sprintf(fetch_cpuname->icon, "");
 	char *cpumodel = procParse(cpuinfo, "model name");
-	sprintf(fetch_cpuname->content, "%s", cpumodel);
+	fetchline *fetch_cpuname = init_fetchline("", "CPU", cpumodel);
 	append_fetchline(list_start, fetch_cpuname);
 	free(cpumodel);
 	fclose(cpuinfo);
 	
+	// Get Mem info
+	FILE *meminfo = fopen("/proc/meminfo", "rb");
+	char *memtotal = procParse(cpuinfo, "MemTotal");
+	char *memavail = procParse(meminfo, "MemAvailable");
+
+	unsigned long totalkB = strtoul(memtotal, NULL, 10);
+	unsigned long availkB = strtoul(memavail, NULL, 10);
+
+	char memLine[strlen(memtotal) + strlen(memavail) + 3];
+	sprintf(memLine, "%.2fGiB / %.2fGiB", (float)(totalkB - availkB) / 1024 / 1024, (float)totalkB / 1024 / 1024);
+
+	fetchline *fetch_memtotal = init_fetchline("", "Mem", memLine);
+	append_fetchline(list_start, fetch_memtotal);
+	free(memtotal);
+	free(memavail);
+	fclose(meminfo);
 
 	align_fetchlist(list_start);
 	print_fetch(list_start);
@@ -78,5 +85,4 @@ void format_time(char *buffer, long uptime_seconds) {
 		sprintf(buffer, "%ld hours, %ld minutes, %ld seconds", uptime_hours, uptime_minutes, uptime_remaining_seconds);
 	}
 }
-
 

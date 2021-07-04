@@ -9,12 +9,24 @@ void print_fetch(fetchline *list_element) {
 	}	
 }
 
-fetchline *init_fetchline(void) {
+fetchline *init_fetchline(char *icon, char *title, char *content) {
 	fetchline *new_fetchline = (fetchline *)malloc(sizeof(fetchline));
 	new_fetchline->content = (char *)malloc(CONTENT_MAX*sizeof(char));
 	new_fetchline->title = (char *)malloc(TITLE_MAX*sizeof(char));
 	new_fetchline->icon = (char *)malloc(ICON_MAX*sizeof(char));
 	new_fetchline->next = NULL;
+
+	if (icon != NULL) {
+		strcpy(new_fetchline->icon, icon);
+	}
+
+	if (title != NULL) {
+		strcpy(new_fetchline->title, title);
+	}
+
+	if (content != NULL) {
+		strcpy(new_fetchline->content, content);
+	}
 
 	return new_fetchline;
 }

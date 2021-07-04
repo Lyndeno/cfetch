@@ -13,7 +13,10 @@ char *procParse(FILE *cpuinfo, char *field) {
 	while(getline(&cpuEntry, &size, cpuinfo) != -1) {
 		if (strstr(cpuEntry, field) != NULL) {
 			// Clean this up
-			char *entryText = strstr(cpuEntry, ":") + 2;
+			char *entryText = strstr(cpuEntry, ":") + 1;
+			while ( *entryText == ' ') {
+				entryText++;
+			}
 
 			// Replace newline character with null terminator
 			*strstr(entryText, "\n") = '\0';
@@ -30,3 +33,5 @@ char *procParse(FILE *cpuinfo, char *field) {
 	// Return NULL if desired entry was not found
 	return NULL;
 }
+
+
