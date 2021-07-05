@@ -8,11 +8,26 @@
 #include "fetchline.h"
 #include <stdbool.h>
 #include "proc.h"
+#include <unistd.h>
 
 void format_time(char *, long);
 unsigned long kBtoMiB(unsigned long kBytes);
 
-int main(void) {
+int main(int argc, char *argv[]) {
+	bool useIcons = false;
+
+	// Parse Commandline arg
+	// I want to use Argp but that won't work on macos or windows apparently.
+	// Maybe I should write my own arg parser
+	bool isCaseInsensitive = false;
+	int opt;
+	while ((opt = getopt(argc, argv, "i")) != -1) {
+		switch (opt) {
+			case 'i': useIcons = true; break;
+			default: break;
+		}
+	}
+
 	fetchline *list_start;
 
 	// Get kernel information
@@ -61,7 +76,7 @@ int main(void) {
 	fclose(meminfo);
 
 	align_fetchlist(list_start);
-	print_fetch(list_start);
+	print_fetch(list_start, useIcons);
 
 	free_fetchlist(list_start);
 	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo

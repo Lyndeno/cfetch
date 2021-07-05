@@ -1,4 +1,5 @@
 #include <string.h>
+#include <stdbool.h>
 
 typedef struct fetchline {
 	char *icon;
@@ -15,7 +16,7 @@ typedef struct fetchline {
 fetchline *init_fetchline(char *icon, char *title, char *content);
 void free_fetchline(fetchline *);
 void append_fetchline(fetchline *list_element, fetchline *new_fetchline);
-void print_fetch(fetchline *list_element);
+void print_fetch(fetchline *list_element, bool useIcons);
 void free_fetchlist(fetchline *list_start);
 void align_fetchlist(fetchline *list_start);
 
