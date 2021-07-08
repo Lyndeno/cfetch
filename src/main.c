@@ -63,7 +63,7 @@ int main(void) {
 
 	FILE *model = fopen("/sys/devices/virtual/dmi/id/product_name", "rb");	
 	char *modelname = readFirstline(model);
-	fetchline *fetch_model = init_fetchline(" ", "Model", modelname);
+	fetchline *fetch_model = init_fetchline("", "Model", modelname);
 	append_fetchline(list_start, fetch_model);
 	free(modelname);
 	fclose(model);
