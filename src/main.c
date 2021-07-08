@@ -70,19 +70,25 @@ int main(void) {
 
 
 void format_time(char *buffer, long uptime_seconds) {
-	// TODO: Move buffer allocation out of this function, we don't want memory leaks later
+	// TODO: Tweak logic so that words aren't always plural
 	if (uptime_seconds < 60) {
 		sprintf(buffer, "%ld seconds", uptime_seconds);
 	} else if (uptime_seconds >= 60 && uptime_seconds < 3600) {
 		long uptime_minutes = uptime_seconds / 60;
 		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*60;
 		sprintf(buffer, "%ld minutes, %ld seconds", uptime_minutes, uptime_remaining_seconds);
-	}
-	else {
+	} else if (uptime_seconds >= 3600 && uptime_seconds < 3600*24 ) {
 		long uptime_hours = uptime_seconds / 3600;
 		long uptime_minutes = (uptime_seconds - uptime_hours*3600)/60;
 		long uptime_remaining_seconds = uptime_seconds - uptime_hours*3600 - uptime_minutes*60; 
 		sprintf(buffer, "%ld hours, %ld minutes, %ld seconds", uptime_hours, uptime_minutes, uptime_remaining_seconds);
+	}
+	else {
+		long uptime_days = uptime_seconds / (3600 * 24);
+		long uptime_hours = (uptime_seconds - uptime_days*3600*24)/3600;
+		long uptime_minutes = (uptime_seconds - uptime_hours*3600 - uptime_days*3600*24)/60;
+		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*60 - uptime_hours*3600 - uptime_days*3600*24;
+		sprintf(buffer, "%ld days, %ld hours, %ld minutes, %ld seconds", uptime_days, uptime_hours, uptime_minutes, uptime_remaining_seconds);
 	}
 }
 
