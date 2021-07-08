@@ -2,11 +2,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-void print_fetch(fetchline *list_element) {
-	while (list_element != NULL) {
-		printf("%s %s%s%s\n", list_element->icon, list_element->title, SEPARATOR, list_element->content);
-		list_element = list_element->next;
-	}	
+void print_fetch(fetchline *list_element, bool useIcons) {
+	// Fix this and make it cleaner
+	if (useIcons) {
+		while (list_element != NULL) {
+			printf("%s %s%s%s\n", list_element->icon, list_element->title, SEPARATOR, list_element->content);
+			list_element = list_element->next;
+		}	
+	} else {
+		while (list_element != NULL) {
+			printf("%s%s%s\n", list_element->title, SEPARATOR, list_element->content);
+			list_element = list_element->next;
+		}	
+	}
 }
 
 fetchline *init_fetchline(char *icon, char *title, char *content) {
