@@ -11,6 +11,7 @@
 
 void format_time(char *, long);
 unsigned long kBtoMiB(unsigned long kBytes);
+char *readFirstline(FILE *f);
 
 int main(void) {
 	fetchline *list_start;
@@ -60,6 +61,13 @@ int main(void) {
 	free(memavail);
 	fclose(meminfo);
 
+	FILE *model = fopen("/sys/devices/virtual/dmi/id/product_name", "rb");	
+	char *modelname = readFirstline(model);
+	fetchline *fetch_model = init_fetchline("", "Model", modelname);
+	append_fetchline(list_start, fetch_model);
+	free(modelname);
+	fclose(model);
+
 	align_fetchlist(list_start);
 	print_fetch(list_start);
 
@@ -86,3 +94,10 @@ void format_time(char *buffer, long uptime_seconds) {
 	}
 }
 
+char *readFirstline(FILE *f) {
+	char *line = NULL;
+	size_t size = 0;
+	getline(&line, &size, f);
+	*strstr(line, "\n") = '\0';
+	return line;
+}
