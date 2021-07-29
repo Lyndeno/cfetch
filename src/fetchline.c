@@ -45,11 +45,12 @@ void free_fetchline(fetchline *garbage) {
 	free(garbage);
 }
 
-void append_fetchline(fetchline *list_element, fetchline *new_fetchline) {
-	while (list_element->next != NULL) {
-		list_element = list_element->next;
+fetchline *append_fetchline(fetchline *end, char *icon, char *title, char *content) {
+	while (end->next != NULL) {
+		end = end->next;
 	}
-	list_element->next = new_fetchline;
+	end->next = init_fetchline(icon, title, content);
+	return end->next;
 }
 
 void free_fetchlist(fetchline *list_start) {

@@ -35,37 +35,31 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	fetchline *list_start;
 	char buffer[64];
 
 	// Get kernel information
 	fetch_kernel(buffer);
-	fetchline *fl_kernel = init_fetchline("", "Kernel", buffer);
-	list_start = fl_kernel;
+	fetchline *list_start = init_fetchline("", "Kernel", buffer);
+	fetchline *list_end = list_start;
 
 	// Get hostname
 	gethostname(buffer, sizeof(buffer));
-	fetchline *fl_hostname = init_fetchline("", "Host", buffer);
-	append_fetchline(list_start, fl_hostname);
+	list_end = append_fetchline(list_end, "", "Host", buffer);
 
 	// Get uptime
 	fetch_uptime(buffer);
-	fetchline *fl_uptime = init_fetchline("", "Uptime", buffer);
-	append_fetchline(list_start, fl_uptime);
+	list_end = append_fetchline(list_start, "", "Uptime", buffer);
 
 	// Get CPU model
 	fetch_cpumodel(buffer);
-	fetchline *fl_cpuname = init_fetchline("", "CPU", buffer);
-	append_fetchline(list_start, fl_cpuname);
+	list_end = append_fetchline(list_start, "", "CPU", buffer);
 	
 	// Get Mem info
 	fetch_memory(buffer);
-	fetchline *fl_memtotal = init_fetchline("", "Mem", buffer);
-	append_fetchline(list_start, fl_memtotal);
+	list_end = append_fetchline(list_start, "", "Mem", buffer);
 
 	fetch_model(buffer);
-	fetchline *fl_model = init_fetchline("", "Model", buffer);
-	append_fetchline(list_start, fl_model);
+	list_end = append_fetchline(list_start, "", "Model", buffer);
 
 	align_fetchlist(list_start);
 	print_fetch(list_start, useIcons);
