@@ -68,8 +68,6 @@ int main(int argc, char *argv[]) {
 	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo
 }
 
-
-
 void format_time(char *buffer, long uptime_seconds) {
 	// TODO: Tweak logic so that words aren't always plural
 	if (uptime_seconds < 60) {
