@@ -24,6 +24,12 @@ void fetch_memory(char *buffer);
 void fetch_model(char *buffer);
 void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_function)(char *), char *buffer);
 
+typedef struct fetchentry {
+	char icon[ICON_MAX];
+	char title[TITLE_MAX];
+	void (*fetchfunc);
+} fetchentry;
+
 int main(int argc, char *argv[]) {
 	bool useIcons = false;
 
@@ -39,15 +45,20 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+	fetchentry fetchlist[] = {
+		{.icon = "", .title = "Kernel", .fetchfunc = &fetch_kernel},
+		{.icon = "", .title = "Host", .fetchfunc = &fetch_hostname}
+	};
+
 	char buffer[BUFFER_SIZE];
 
 	// Get kernel information
 	fetch_kernel(buffer);
-	fetchline *list_start = init_fetchline("", "Kernel", buffer);
+	fetchline *list_start = init_fetchline(fetchlist[0].icon, fetchlist[0].title, buffer);
 	fetchline *list_end = list_start;
 
 	// Get hostname
-	gen_fetchline(&list_end, "", "Host", &fetch_hostname, buffer);
+	gen_fetchline(&list_end, fetchlist[1].icon, fetchlist[1].title, fetchlist[1].fetchfunc, buffer);
 
 	// Get uptime
 	gen_fetchline(&list_end, "", "Uptime", &fetch_uptime, buffer);
