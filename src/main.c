@@ -48,18 +48,18 @@ int main(int argc, char *argv[]) {
 
 	// Get uptime
 	fetch_uptime(buffer);
-	list_end = append_fetchline(list_start, "", "Uptime", buffer);
+	list_end = append_fetchline(list_end, "", "Uptime", buffer);
 
 	// Get CPU model
 	fetch_cpumodel(buffer);
-	list_end = append_fetchline(list_start, "", "CPU", buffer);
+	list_end = append_fetchline(list_end, "", "CPU", buffer);
 	
 	// Get Mem info
 	fetch_memory(buffer);
-	list_end = append_fetchline(list_start, "", "Mem", buffer);
+	list_end = append_fetchline(list_end, "", "Mem", buffer);
 
 	fetch_model(buffer);
-	list_end = append_fetchline(list_start, "", "Model", buffer);
+	list_end = append_fetchline(list_end, "", "Model", buffer);
 
 	align_fetchlist(list_start);
 	print_fetch(list_start, useIcons);
