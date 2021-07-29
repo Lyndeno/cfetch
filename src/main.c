@@ -10,15 +10,19 @@
 #include "proc.h"
 #include <unistd.h>
 
+#define BUFFER_SIZE 64
+
 void format_time(char *, long);
 unsigned long kBtoMiB(unsigned long kBytes);
 char *readFirstline(FILE *f);
 
 void fetch_kernel(char *buffer);
+void fetch_hostname(char *buffer);
 void fetch_uptime(char *buffer);
 void fetch_cpumodel(char *buffer);
 void fetch_memory(char *buffer);
 void fetch_model(char *buffer);
+void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_function)(char *), char *buffer);
 
 int main(int argc, char *argv[]) {
 	bool useIcons = false;
@@ -35,7 +39,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	char buffer[64];
+	char buffer[BUFFER_SIZE];
 
 	// Get kernel information
 	fetch_kernel(buffer);
@@ -43,29 +47,29 @@ int main(int argc, char *argv[]) {
 	fetchline *list_end = list_start;
 
 	// Get hostname
-	gethostname(buffer, sizeof(buffer));
-	list_end = append_fetchline(list_end, "", "Host", buffer);
+	gen_fetchline(&list_end, "", "Host", &fetch_hostname, buffer);
 
 	// Get uptime
-	fetch_uptime(buffer);
-	list_end = append_fetchline(list_end, "", "Uptime", buffer);
+	gen_fetchline(&list_end, "", "Uptime", &fetch_uptime, buffer);
 
 	// Get CPU model
-	fetch_cpumodel(buffer);
-	list_end = append_fetchline(list_end, "", "CPU", buffer);
+	gen_fetchline(&list_end, "", "CPU", &fetch_cpumodel, buffer);
 	
 	// Get Mem info
-	fetch_memory(buffer);
-	list_end = append_fetchline(list_end, "", "Mem", buffer);
+	gen_fetchline(&list_end, "", "Mem", &fetch_memory, buffer);
 
-	fetch_model(buffer);
-	list_end = append_fetchline(list_end, "", "Model", buffer);
+	// Get device model
+	gen_fetchline(&list_end, "", "Model", &fetch_model, buffer);
 
 	align_fetchlist(list_start);
 	print_fetch(list_start, useIcons);
 
 	free_fetchlist(list_start);
-	// TODO: Memory reported from sysinfo is inaccurate, consider parsing /proc/meminfo
+}
+
+void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_function)(char *), char *buffer) {
+	fl_function(buffer);
+	append_fetchline(list_end, icon, title, buffer);
 }
 
 void format_time(char *buffer, long uptime_seconds) {
@@ -105,7 +109,11 @@ void fetch_kernel(char *buffer) {
 	sprintf(buffer ,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
 }
 
-void fetch_uptime(char* buffer) {
+void fetch_hostname(char *buffer) {
+	gethostname(buffer, BUFFER_SIZE);
+}
+
+void fetch_uptime(char *buffer) {
 	struct sysinfo machine_info;
 	sysinfo(&machine_info);
 	format_time(buffer, machine_info.uptime);
