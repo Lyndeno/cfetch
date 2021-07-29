@@ -7,7 +7,7 @@
  * Takes an input file, expects /proc/cpuinfo with field names and values separated by semicolons
  * Returns pointer to field contents, NULL if field could not be found
  */
-char *procParse(FILE *cpuinfo, char *field) {
+char *procParse(FILE *cpuinfo, char *buffer, char *field) {
 	char *cpuEntry = NULL;
 	size_t size = 0;
 	while(getline(&cpuEntry, &size, cpuinfo) != -1) {
@@ -22,12 +22,11 @@ char *procParse(FILE *cpuinfo, char *field) {
 			*strstr(entryText, "\n") = '\0';
 
 			// Allocate exact memory for final string
-			char *cleanText = malloc(sizeof(char)*(strlen(entryText) + 1));
-			strcpy(cleanText, entryText);
+			strcpy(buffer, entryText);
 
 			// Free line pointer
 			free(cpuEntry);
-			return cleanText;
+			return buffer;
 		}	
 	}
 	// Return NULL if desired entry was not found

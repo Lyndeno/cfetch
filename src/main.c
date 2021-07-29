@@ -14,6 +14,12 @@ void format_time(char *, long);
 unsigned long kBtoMiB(unsigned long kBytes);
 char *readFirstline(FILE *f);
 
+void fetch_kernel(char *buffer);
+void fetch_uptime(char *buffer);
+void fetch_cpumodel(char *buffer);
+void fetch_memory(char *buffer);
+void fetch_model(char *buffer);
+
 int main(int argc, char *argv[]) {
 	bool useIcons = false;
 
@@ -30,58 +36,36 @@ int main(int argc, char *argv[]) {
 	}
 
 	fetchline *list_start;
+	char buffer[64];
 
 	// Get kernel information
-	fetchline *fetch_kernel = init_fetchline("", "Kernel", NULL);
-	list_start = fetch_kernel;
-	struct utsname local_machine;
-	uname(&local_machine);
-	sprintf(fetch_kernel->content,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
+	fetch_kernel(buffer);
+	fetchline *fl_kernel = init_fetchline("", "Kernel", buffer);
+	list_start = fl_kernel;
 
 	// Get hostname
-	char hostname[CONTENT_MAX+1];
-	gethostname(hostname, CONTENT_MAX+ 1);
-	fetchline *fetch_hostname = init_fetchline("", "Host", hostname);
-	append_fetchline(list_start, fetch_hostname);
+	gethostname(buffer, sizeof(buffer));
+	fetchline *fl_hostname = init_fetchline("", "Host", buffer);
+	append_fetchline(list_start, fl_hostname);
 
 	// Get uptime
-	struct sysinfo machine_info;
-	sysinfo(&machine_info);
-	fetchline *fetch_uptime = init_fetchline("", "Uptime", NULL);
-	format_time(fetch_uptime->content, machine_info.uptime);
-	append_fetchline(list_start, fetch_uptime);
+	fetch_uptime(buffer);
+	fetchline *fl_uptime = init_fetchline("", "Uptime", buffer);
+	append_fetchline(list_start, fl_uptime);
 
 	// Get CPU model
-	FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
-	char *cpumodel = procParse(cpuinfo, "model name");
-	fetchline *fetch_cpuname = init_fetchline("", "CPU", cpumodel);
-	append_fetchline(list_start, fetch_cpuname);
-	free(cpumodel);
-	fclose(cpuinfo);
+	fetch_cpumodel(buffer);
+	fetchline *fl_cpuname = init_fetchline("", "CPU", buffer);
+	append_fetchline(list_start, fl_cpuname);
 	
 	// Get Mem info
-	FILE *meminfo = fopen("/proc/meminfo", "rb");
-	char *memtotal = procParse(cpuinfo, "MemTotal");
-	char *memavail = procParse(meminfo, "MemAvailable");
+	fetch_memory(buffer);
+	fetchline *fl_memtotal = init_fetchline("", "Mem", buffer);
+	append_fetchline(list_start, fl_memtotal);
 
-	unsigned long totalkB = strtoul(memtotal, NULL, 10);
-	unsigned long availkB = strtoul(memavail, NULL, 10);
-
-	char memLine[strlen(memtotal) + strlen(memavail) + 3];
-	sprintf(memLine, "%.2fGiB / %.2fGiB", (float)(totalkB - availkB) / 1024 / 1024, (float)totalkB / 1024 / 1024);
-
-	fetchline *fetch_memtotal = init_fetchline("", "Mem", memLine);
-	append_fetchline(list_start, fetch_memtotal);
-	free(memtotal);
-	free(memavail);
-	fclose(meminfo);
-
-	FILE *model = fopen("/sys/devices/virtual/dmi/id/product_name", "rb");	
-	char *modelname = readFirstline(model);
-	fetchline *fetch_model = init_fetchline("", "Model", modelname);
-	append_fetchline(list_start, fetch_model);
-	free(modelname);
-	fclose(model);
+	fetch_model(buffer);
+	fetchline *fl_model = init_fetchline("", "Model", buffer);
+	append_fetchline(list_start, fl_model);
 
 	align_fetchlist(list_start);
 	print_fetch(list_start, useIcons);
@@ -121,4 +105,43 @@ char *readFirstline(FILE *f) {
 	getline(&line, &size, f);
 	*strstr(line, "\n") = '\0';
 	return line;
+}
+
+void fetch_kernel(char *buffer) {
+	struct utsname local_machine;
+	uname(&local_machine);
+	sprintf(buffer ,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
+}
+
+void fetch_uptime(char* buffer) {
+	struct sysinfo machine_info;
+	sysinfo(&machine_info);
+	format_time(buffer, machine_info.uptime);
+}
+
+void fetch_cpumodel(char *buffer) {
+	FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
+	procParse(cpuinfo, buffer, "model name");
+	fclose(cpuinfo);
+}
+
+void fetch_memory(char *buffer) {
+	FILE *meminfo = fopen("/proc/meminfo", "rb");
+	// TODO: CHange these arbitrary values to something a little more known
+	char memtotal[16]; procParse(meminfo, memtotal, "MemTotal");
+	char memavail[16]; procParse(meminfo, memavail, "MemAvailable");
+	unsigned long totalkB = strtoul(memtotal, NULL, 10);
+	unsigned long availkB = strtoul(memavail, NULL, 10);
+
+	char memLine[strlen(memtotal) + strlen(memavail) + 3];
+	sprintf(buffer, "%.2fGiB / %.2fGiB", (float)(totalkB - availkB) / 1024 / 1024, (float)totalkB / 1024 / 1024);
+	fclose(meminfo);
+}
+
+void fetch_model(char *buffer) {
+	FILE *model = fopen("/sys/devices/virtual/dmi/id/product_name", "rb");	
+	char *modelname = readFirstline(model);
+	strcpy(buffer, modelname);
+	free(modelname);
+	fclose(model);
 }

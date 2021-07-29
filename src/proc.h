@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-char *procParse(FILE *cpuinfo, char *field);
+char *procParse(FILE *cpuinfo, char *buffer, char *field);
 
 
 #endif
