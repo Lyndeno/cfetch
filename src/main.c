@@ -12,6 +12,9 @@
 
 #define BUFFER_SIZE 64
 
+#define SECONDS_MIN 60
+#define SECONDS_HOUR 3600
+#define SECONDS_DAY 86400
 void format_time(char *, long);
 unsigned long kBtoMiB(unsigned long kBytes);
 char *readFirstline(FILE *f);
@@ -22,7 +25,6 @@ void fetch_uptime(char *buffer);
 void fetch_cpumodel(char *buffer);
 void fetch_memory(char *buffer);
 void fetch_model(char *buffer);
-void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_function)(char *), char *buffer);
 
 typedef struct fetchentry {
 	char icon[ICON_MAX];
@@ -72,31 +74,25 @@ int main(int argc, char *argv[]) {
 	free_fetchlist(list_start);
 }
 
-
-void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_function)(char *), char *buffer) {
-	fl_function(buffer);
-	append_fetchline(list_end, icon, title, buffer);
-}
-
 void format_time(char *buffer, long uptime_seconds) {
 	// TODO: Tweak logic so that words aren't always plural
-	if (uptime_seconds < 60) {
+	if (uptime_seconds < SECONDS_MIN) {
 		sprintf(buffer, "%ld seconds", uptime_seconds);
-	} else if (uptime_seconds >= 60 && uptime_seconds < 3600) {
-		long uptime_minutes = uptime_seconds / 60;
-		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*60;
+	} else if (uptime_seconds >= SECONDS_MIN && uptime_seconds < SECONDS_HOUR) {
+		long uptime_minutes = uptime_seconds / SECONDS_MIN;
+		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*SECONDS_MIN;
 		sprintf(buffer, "%ld minutes, %ld seconds", uptime_minutes, uptime_remaining_seconds);
-	} else if (uptime_seconds >= 3600 && uptime_seconds < 3600*24 ) {
-		long uptime_hours = uptime_seconds / 3600;
-		long uptime_minutes = (uptime_seconds - uptime_hours*3600)/60;
-		long uptime_remaining_seconds = uptime_seconds - uptime_hours*3600 - uptime_minutes*60; 
+	} else if (uptime_seconds >= SECONDS_HOUR && uptime_seconds < SECONDS_DAY ) {
+		long uptime_hours = uptime_seconds / SECONDS_HOUR;
+		long uptime_minutes = (uptime_seconds - uptime_hours*SECONDS_HOUR)/SECONDS_MIN;
+		long uptime_remaining_seconds = uptime_seconds - uptime_hours*SECONDS_HOUR - uptime_minutes*SECONDS_MIN; 
 		sprintf(buffer, "%ld hours, %ld minutes, %ld seconds", uptime_hours, uptime_minutes, uptime_remaining_seconds);
 	}
 	else {
-		long uptime_days = uptime_seconds / (3600 * 24);
-		long uptime_hours = (uptime_seconds - uptime_days*3600*24)/3600;
-		long uptime_minutes = (uptime_seconds - uptime_hours*3600 - uptime_days*3600*24)/60;
-		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*60 - uptime_hours*3600 - uptime_days*3600*24;
+		long uptime_days = uptime_seconds / SECONDS_DAY;
+		long uptime_hours = (uptime_seconds - uptime_days*SECONDS_DAY)/SECONDS_HOUR;
+		long uptime_minutes = (uptime_seconds - uptime_hours*SECONDS_HOUR - uptime_days*SECONDS_DAY)/SECONDS_MIN;
+		long uptime_remaining_seconds = uptime_seconds - uptime_minutes*SECONDS_MIN - uptime_hours*SECONDS_HOUR - uptime_days*SECONDS_DAY;
 		sprintf(buffer, "%ld days, %ld hours, %ld minutes, %ld seconds", uptime_days, uptime_hours, uptime_minutes, uptime_remaining_seconds);
 	}
 }
