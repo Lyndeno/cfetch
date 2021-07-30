@@ -27,7 +27,7 @@ void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_func
 typedef struct fetchentry {
 	char icon[ICON_MAX];
 	char title[TITLE_MAX];
-	void (*fetchfunc);
+	void (*fetchfunc)(char *buffer);
 } fetchentry;
 
 int main(int argc, char *argv[]) {
@@ -46,8 +46,12 @@ int main(int argc, char *argv[]) {
 	}
 
 	fetchentry fetchlist[] = {
-		{.icon = "", .title = "Kernel", .fetchfunc = &fetch_kernel},
-		{.icon = "", .title = "Host", .fetchfunc = &fetch_hostname}
+		{"", "Kernel", &fetch_kernel},
+		{"", "Host", &fetch_hostname},
+		{"", "Uptime", &fetch_uptime},
+		{"", "CPU", &fetch_cpumodel},
+		{"", "Mem", &fetch_memory},
+		{"", "Model", &fetch_model}
 	};
 
 	char buffer[BUFFER_SIZE];
@@ -57,26 +61,17 @@ int main(int argc, char *argv[]) {
 	fetchline *list_start = init_fetchline(fetchlist[0].icon, fetchlist[0].title, buffer);
 	fetchline *list_end = list_start;
 
-	// Get hostname
-	gen_fetchline(&list_end, fetchlist[1].icon, fetchlist[1].title, fetchlist[1].fetchfunc, buffer);
-
-	// Get uptime
-	gen_fetchline(&list_end, "", "Uptime", &fetch_uptime, buffer);
-
-	// Get CPU model
-	gen_fetchline(&list_end, "", "CPU", &fetch_cpumodel, buffer);
-	
-	// Get Mem info
-	gen_fetchline(&list_end, "", "Mem", &fetch_memory, buffer);
-
-	// Get device model
-	gen_fetchline(&list_end, "", "Model", &fetch_model, buffer);
+	for (size_t i = 1; i < sizeof(fetchlist) / sizeof(fetchentry); i++) {
+		fetchlist[i].fetchfunc(buffer);
+		append_fetchline(&list_end, fetchlist[i].icon, fetchlist[i].title, buffer);
+	}
 
 	align_fetchlist(list_start);
 	print_fetch(list_start, useIcons);
 
 	free_fetchlist(list_start);
 }
+
 
 void gen_fetchline(fetchline **list_end, char *icon, char *title, void (*fl_function)(char *), char *buffer) {
 	fl_function(buffer);
