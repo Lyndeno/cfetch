@@ -2,7 +2,6 @@
 #include <stdbool.h>
 
 #define SEPARATOR ": "
-#define CONTENT_MAX 64 // TODO: Implement dynamic string allocation for muh minimal resource usage
 #define TITLE_MAX 32
 #define ICON_MAX 4 // TODO: I have no idea how bytes glyphs like fontawesome and nerdfonts are
 
