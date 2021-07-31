@@ -25,26 +25,31 @@ void fetch_uptime(char *buffer, size_t buffer_size) {
 	struct sysinfo machine_info;
 	sysinfo(&machine_info);
 
+	char plural[] = "s";
+	char singular[] = "";
+	char *plurality = NULL;
+	
+	size_t bytes_written = 0;
+
 	// TODO: Tweak logic so that words aren't always plural
-	if (machine_info.uptime < SECONDS_MIN) {
-		sprintf(buffer, "%ld seconds", machine_info.uptime);
-	} else if (machine_info.uptime >= SECONDS_MIN && machine_info.uptime < SECONDS_HOUR) {
-		long uptime_minutes = machine_info.uptime / SECONDS_MIN;
-		long uptime_remaining_seconds = machine_info.uptime - uptime_minutes*SECONDS_MIN;
-		sprintf(buffer, "%ld minutes, %ld seconds", uptime_minutes, uptime_remaining_seconds);
-	} else if (machine_info.uptime >= SECONDS_HOUR && machine_info.uptime < SECONDS_DAY ) {
-		long uptime_hours = machine_info.uptime / SECONDS_HOUR;
-		long uptime_minutes = (machine_info.uptime - uptime_hours*SECONDS_HOUR)/SECONDS_MIN;
-		long uptime_remaining_seconds = machine_info.uptime - uptime_hours*SECONDS_HOUR - uptime_minutes*SECONDS_MIN; 
-		sprintf(buffer, "%ld hours, %ld minutes, %ld seconds", uptime_hours, uptime_minutes, uptime_remaining_seconds);
+	long uptime_days = machine_info.uptime / SECONDS_DAY;
+	long uptime_hours = (machine_info.uptime - uptime_days*SECONDS_DAY)/SECONDS_HOUR;
+	long uptime_minutes = (machine_info.uptime - uptime_hours*SECONDS_HOUR - uptime_days*SECONDS_DAY)/SECONDS_MIN;
+	long uptime_seconds = machine_info.uptime - uptime_minutes*SECONDS_MIN - uptime_hours*SECONDS_HOUR - uptime_days*SECONDS_DAY;
+	if (uptime_days > 0) {
+		if (uptime_days != 1) { plurality = plural; } else { plurality = singular; }
+		bytes_written += sprintf(buffer, "%ld day%s, ", uptime_days, plurality);
+	} 
+	if (uptime_hours > 0) {
+		if (uptime_hours != 1) { plurality = plural; } else { plurality = singular; }
+		bytes_written += sprintf(buffer + bytes_written, "%ld hour%s, ", uptime_hours, plurality);
 	}
-	else {
-		long uptime_days = machine_info.uptime / SECONDS_DAY;
-		long uptime_hours = (machine_info.uptime - uptime_days*SECONDS_DAY)/SECONDS_HOUR;
-		long uptime_minutes = (machine_info.uptime - uptime_hours*SECONDS_HOUR - uptime_days*SECONDS_DAY)/SECONDS_MIN;
-		long uptime_remaining_seconds = machine_info.uptime - uptime_minutes*SECONDS_MIN - uptime_hours*SECONDS_HOUR - uptime_days*SECONDS_DAY;
-		sprintf(buffer, "%ld days, %ld hours, %ld minutes, %ld seconds", uptime_days, uptime_hours, uptime_minutes, uptime_remaining_seconds);
+	if (uptime_minutes != 0) {
+		if (uptime_minutes > 1) { plurality = plural; } else { plurality = singular; }
+		bytes_written += sprintf(buffer + bytes_written, "%ld minute%s, ", uptime_minutes, plurality);
 	}
+	if (uptime_seconds != 1) { plurality = plural; } else { plurality = singular; }
+	sprintf(buffer + bytes_written, "%ld second%s", uptime_seconds, plurality);
 }
 
 void fetch_cpumodel(char *buffer, size_t buffer_size) {
