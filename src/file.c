@@ -1,4 +1,4 @@
-#include "proc.h"
+#include "file.h"
 #include <string.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -33,4 +33,10 @@ char *procParse(FILE *cpuinfo, char *buffer, char *field) {
 	return NULL;
 }
 
-
+char *readFirstline(FILE *f) {
+	char *line = NULL;
+	size_t size = 0;
+	getline(&line, &size, f);
+	*strstr(line, "\n") = '\0';
+	return line;
+}

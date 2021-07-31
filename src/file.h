@@ -1,9 +1,10 @@
-#ifndef PROC_H
-#define PROC_H
+#ifndef FILE_H
+#define FILE_H
 
 #include <stdio.h>
 
 char *procParse(FILE *cpuinfo, char *buffer, char *field);
+char *readFirstline(FILE *f);
 
 
 #endif

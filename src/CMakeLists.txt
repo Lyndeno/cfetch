@@ -1,1 +1,1 @@
-add_executable(cfetch main.c fetchline.c proc.c)
+add_executable(cfetch main.c fetchline.c file.c fetch.c)

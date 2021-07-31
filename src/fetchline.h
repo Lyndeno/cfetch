@@ -9,7 +9,7 @@
 typedef struct fetchlist {
 	char icon[ICON_MAX];
 	char title[TITLE_MAX];
-	void (*fetchfunc)(char *buffer);
+	void (*fetchfunc)(char *, size_t);
 } fetchlist;
 
 void align_fetchlist(fetchlist *fetcharray, size_t count);
