@@ -6,15 +6,10 @@
 #define TITLE_MAX 32
 #define ICON_MAX 4 // TODO: I have no idea how bytes glyphs like fontawesome and nerdfonts are
 
-typedef struct fetchline {
-	char *icon;
-	char *title;
-	char content[CONTENT_MAX];
-	struct fetchline *next;
-} fetchline;
+typedef struct fetchlist {
+	char icon[ICON_MAX];
+	char title[TITLE_MAX];
+	void (*fetchfunc)(char *buffer);
+} fetchlist;
 
-fetchline *init_fetchline(char *icon, char *title, char *content);
-void print_fetch(fetchline *list_element, bool useIcons);
-void free_fetchlist(fetchline *list_start);
-void align_fetchlist(fetchline *list_start);
-
+void align_fetchlist(fetchlist *fetcharray, size_t count);

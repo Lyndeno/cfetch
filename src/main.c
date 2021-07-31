@@ -26,13 +26,6 @@ void fetch_cpumodel(char *buffer);
 void fetch_memory(char *buffer);
 void fetch_model(char *buffer);
 
-typedef struct fetchentry {
-	char icon[ICON_MAX];
-	char title[TITLE_MAX];
-	void (*fetchfunc)(char *buffer);
-} fetchentry;
-void align_fetchlist_new(fetchentry *fetchlist, size_t count);
-
 int main(int argc, char *argv[]) {
 	bool useIcons = false;
 
@@ -48,7 +41,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	fetchentry fetchlist[] = {
+	fetchlist fetcharray[] = {
 		{"", "Kernel", &fetch_kernel},
 		{"", "Host", &fetch_hostname},
 		{"", "Uptime", &fetch_uptime},
@@ -59,53 +52,16 @@ int main(int argc, char *argv[]) {
 
 	char buffer[BUFFER_SIZE];
 
-	align_fetchlist_new(fetchlist, sizeof(fetchlist) / sizeof(fetchentry));
+	align_fetchlist(fetcharray, sizeof(fetcharray) / sizeof(fetchlist));
 
 	// Get kernel information
 	fetch_kernel(buffer);
-	fetchline *list_start = init_fetchline(fetchlist[0].icon, fetchlist[0].title, buffer);
-	fetchline *list_end = list_start;
 
-	for (size_t i = 1; i < sizeof(fetchlist) / sizeof(fetchentry); i++) {
-		fetchlist[i].fetchfunc(buffer);
+	for (size_t i = 0; i < sizeof(fetcharray) / sizeof(fetchlist); i++) {
+		fetcharray[i].fetchfunc(buffer);
 
-		list_end->next = init_fetchline(fetchlist[i].icon, fetchlist[i].title,buffer);
-		list_end = list_end->next;
-		if(useIcons) printf("%s ", fetchlist[i].icon);
-		printf("%s%s%s\n", fetchlist[i].title, SEPARATOR, buffer);
-	}
-
-	align_fetchlist(list_start);
-	print_fetch(list_start, useIcons);
-
-	free_fetchlist(list_start);
-}
-
-void align_fetchlist_new(fetchentry *fetchlist, size_t count) {
-	size_t max_length = 0;
-	size_t current_length;
-	char buffer[TITLE_MAX];
-	char padding[TITLE_MAX];
-
-	for (size_t i = 0; i < count; i++) {
-		current_length = strlen(fetchlist[i].title);
-		if (current_length > max_length) {
-			max_length = current_length;
-		}
-	}
-	for (size_t i = 0; i < count; i++) {
-		current_length = strlen(fetchlist[i].title);
-		if (current_length < max_length) {
-			for (size_t j = 0; j <= max_length - current_length; j++) {
-				if (j == max_length - current_length) {
-					padding[j] = '\0';
-				} else {
-					padding[j] = ' ';
-				}
-			}
-			strcpy(buffer, fetchlist[i].title);
-			sprintf(fetchlist[i].title, "%s%s", padding, buffer);
-		}
+		if(useIcons) printf("%s ", fetcharray[i].icon);
+		printf("%s%s%s\n", fetcharray[i].title, SEPARATOR, buffer);
 	}
 }
 
