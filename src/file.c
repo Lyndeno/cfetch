@@ -36,7 +36,7 @@ char *procParse(FILE *cpuinfo, char *buffer, char *field) {
 char *osParse(FILE *os_release, char *buffer, char *field) {
 	char *osEntry = NULL;
 	size_t size = 0;
-	while(getline(&osEntry, &size, os_release)) {
+	while(getline(&osEntry, &size, os_release) != -1) {
 		if (strstr(osEntry, field) != NULL) {
 			char *entryText = strstr(osEntry, "=") + 1;
 
