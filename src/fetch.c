@@ -66,7 +66,6 @@ void fetch_memory(char *buffer, size_t buffer_size) {
 	unsigned long totalkB = strtoul(memtotal, NULL, 10);
 	unsigned long availkB = strtoul(memavail, NULL, 10);
 
-	char memLine[strlen(memtotal) + strlen(memavail) + 3];
 	sprintf(buffer, "%.2fGiB / %.2fGiB", (float)(totalkB - availkB) / 1024 / 1024, (float)totalkB / 1024 / 1024);
 	fclose(meminfo);
 }
