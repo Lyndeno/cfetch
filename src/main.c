@@ -13,7 +13,6 @@ int main(int argc, char *argv[]) {
 	// Parse Commandline arg
 	// I want to use Argp but that won't work on macos or windows apparently.
 	// Maybe I should write my own arg parser
-	bool isCaseInsensitive = false;
 	int opt;
 	while ((opt = getopt(argc, argv, "i")) != -1) {
 		switch (opt) {
