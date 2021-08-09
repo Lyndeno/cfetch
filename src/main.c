@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
 
 	fetchlist fetcharray[] = {
 		{"", "Kernel", &fetch_kernel},
+		{"", "Arch", &fetch_architecture},
 		{"", "Host", &fetch_hostname},
 		{"", "Uptime", &fetch_uptime},
 		{"", "CPU", &fetch_cpumodel},

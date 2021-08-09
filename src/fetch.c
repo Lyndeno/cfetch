@@ -14,7 +14,13 @@
 void fetch_kernel(char *buffer, size_t buffer_size) {
 	struct utsname local_machine;
 	uname(&local_machine);
-	sprintf(buffer ,"%s %s %s", local_machine.sysname, local_machine.release, local_machine.machine );
+	sprintf(buffer ,"%s %s", local_machine.sysname, local_machine.release );
+}
+
+void fetch_architecture(char *buffer, size_t buffer_size) {
+	struct utsname local_machine;
+	uname(&local_machine);
+	sprintf(buffer, "%s", local_machine.machine);
 }
 
 void fetch_hostname(char *buffer, size_t buffer_size) {
