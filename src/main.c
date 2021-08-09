@@ -10,14 +10,16 @@
 
 int main(int argc, char *argv[]) {
 	bool useIcons = false;
+	bool useColours = true;
 
 	// Parse Commandline arg
 	// I want to use Argp but that won't work on macos or windows apparently.
 	// Maybe I should write my own arg parser
 	int opt;
-	while ((opt = getopt(argc, argv, "i")) != -1) {
+	while ((opt = getopt(argc, argv, "ic")) != -1) {
 		switch (opt) {
 			case 'i': useIcons = true; break;
+			case 'c': useColours = false; break;
 			default: break;
 		}
 	}
@@ -36,7 +38,8 @@ int main(int argc, char *argv[]) {
 	char buffer[BUFFER_SIZE];
 	char colour[32];
 
-	fetch_colour(colour, sizeof(colour)/sizeof(char));
+	if (useColours) fetch_colour(colour, sizeof(colour)/sizeof(char));
+	else colour[0] = '\0';
 
 	align_fetchlist(fetcharray, sizeof(fetcharray) / sizeof(fetchlist));
 
