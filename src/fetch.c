@@ -23,6 +23,12 @@ void fetch_architecture(char *buffer, size_t buffer_size) {
 	sprintf(buffer, "%s", local_machine.machine);
 }
 
+void fetch_distro(char *buffer, size_t buffer_size) {
+	FILE *distroinfo = fopen("/etc/os-release", "rb");
+	osParse(distroinfo, buffer, "PRETTY_NAME");
+	fclose(distroinfo);
+}
+
 void fetch_hostname(char *buffer, size_t buffer_size) {
 	gethostname(buffer, buffer_size);
 }

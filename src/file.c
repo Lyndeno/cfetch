@@ -33,6 +33,30 @@ char *procParse(FILE *cpuinfo, char *buffer, char *field) {
 	return NULL;
 }
 
+char *osParse(FILE *os_release, char *buffer, char *field) {
+	char *osEntry = NULL;
+	size_t size = 0;
+	while(getline(&osEntry, &size, os_release)) {
+		if (strstr(osEntry, field) != NULL) {
+			char *entryText = strstr(osEntry, "=") + 1;
+
+			*strstr(entryText, "\n") = '\0';
+
+			while ( *entryText == ' ' || *entryText == '\"') {
+				entryText++;
+			}
+
+			*strstr(entryText, "\"") = '\0';
+
+			strcpy(buffer, entryText);
+
+			free(osEntry);
+			return buffer;
+		}
+	}
+	return NULL;
+}
+
 char *readFirstline(FILE *f) {
 	char *line = NULL;
 	size_t size = 0;

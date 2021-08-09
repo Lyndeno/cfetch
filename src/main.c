@@ -22,12 +22,13 @@ int main(int argc, char *argv[]) {
 	}
 
 	fetchlist fetcharray[] = {
+		{"", "Distro", &fetch_distro},
 		{"", "Kernel", &fetch_kernel},
-		{"", "Arch", &fetch_architecture},
-		{"", "Host", &fetch_hostname},
+		{"", "Architecture", &fetch_architecture},
+		{"", "Hostname", &fetch_hostname},
 		{"", "Uptime", &fetch_uptime},
 		{"", "CPU", &fetch_cpumodel},
-		{"", "Mem", &fetch_memory},
+		{"", "Memory", &fetch_memory},
 		{"", "Model", &fetch_model}
 	};
 
