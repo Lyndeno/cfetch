@@ -11,18 +11,23 @@ CFLAGS := -Wall
 LDFLAGS := -Llib
 LDLIBS :=
 
+colour_green=$(shell echo -e "\033[0;32m")
+colour_reset=$(shell echo -e "\033[0m")
+
 .PHONY: all clean
 
 all: $(EXE)
 
 $(EXE): $(OBJ) | $(BIN_DIR)
-	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	@$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+	@echo "$(colour_green)CC $(colour_reset)$^ $@"
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	@echo "$(colour_green)CC $(colour_reset)$< $@"
 
 $(BIN_DIR) $(OBJ_DIR):
-	mkdir -p $@
+	@mkdir -p $@
 
 clean:
 	@$(RM) -rv $(EXE) $(OBJ_DIR)
