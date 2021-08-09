@@ -54,6 +54,7 @@ char *osParse(FILE *os_release, char *buffer, char *field) {
 			return buffer;
 		}
 	}
+	buffer[0] = '\0';
 	return NULL;
 }
 
