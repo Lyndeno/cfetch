@@ -4,8 +4,9 @@
 void align_fetchlist(fetchlist *fetcharray, size_t count) {
 	size_t max_length = 0;
 	size_t current_length;
-	char buffer[TITLE_MAX];
-	char padding[TITLE_MAX];
+	// We assume that the given title won't be over half the maximum, ideally I would do something smarter here.
+	char buffer[TITLE_MAX/2];
+	char padding[TITLE_MAX/2];
 
 	for (size_t i = 0; i < count; i++) {
 		current_length = strlen(fetcharray[i].title);
