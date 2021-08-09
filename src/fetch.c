@@ -29,6 +29,16 @@ void fetch_distro(char *buffer, size_t buffer_size) {
 	fclose(distroinfo);
 }
 
+void fetch_colour(char *buffer, size_t buffer_size) {
+	FILE *distroinfo = fopen("/etc/os-release", "rb");
+	strcpy(buffer, "\e[");
+	osParse(distroinfo, buffer + strlen(buffer), "ANSI_COLOR");
+	size_t old_length = strlen(buffer);
+	buffer[old_length] = 'm';
+	buffer[old_length + 1] = '\0';
+	fclose(distroinfo);
+}
+
 void fetch_hostname(char *buffer, size_t buffer_size) {
 	gethostname(buffer, buffer_size);
 }

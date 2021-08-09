@@ -6,6 +6,7 @@
 #include "fetch.h"
 
 #define BUFFER_SIZE 64
+#define COLOUR_RESET "\e[0m"
 
 int main(int argc, char *argv[]) {
 	bool useIcons = false;
@@ -33,13 +34,16 @@ int main(int argc, char *argv[]) {
 	};
 
 	char buffer[BUFFER_SIZE];
+	char colour[32];
+
+	fetch_colour(colour, sizeof(colour)/sizeof(char));
 
 	align_fetchlist(fetcharray, sizeof(fetcharray) / sizeof(fetchlist));
 
 	for (size_t i = 0; i < sizeof(fetcharray) / sizeof(fetchlist); i++) {
 		fetcharray[i].fetchfunc(buffer, sizeof(buffer)/sizeof(char));
 
-		if(useIcons) printf("%s ", fetcharray[i].icon);
-		printf("%s%s%s\n", fetcharray[i].title, SEPARATOR, buffer);
+		if(useIcons) printf("%s%s%s ", colour, fetcharray[i].icon, COLOUR_RESET);
+		printf("%s%s%s%s%s\n", colour, fetcharray[i].title, COLOUR_RESET, SEPARATOR, buffer);
 	}
 }
