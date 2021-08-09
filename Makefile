@@ -1,21 +1,30 @@
-CC=gcc
-CFLAGS=-I./src
-DEPS = ./src/fetchline.h ./src/file.h ./src/fetch.h
-OBJ = ./src/main.o ./src/fetchline.o ./src/file.o ./src/fetch.o
+SRC_DIR := src
+OBJ_DIR := obj
+BIN_DIR := .
 
-colour_green=$(shell echo -e "\033[0;32m")
-colour_reset=$(shell echo -e "\033[0m")
+EXE := $(BIN_DIR)/cfetch
+SRC := $(wildcard $(SRC_DIR)/*.c)
+OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-%.o: %.c $(DEPS)
-	@$(CC) -c -o $@ $< $(CFLAGS)
-	@echo "$(colour_green)CC $(colour_reset)$<"
+CPPFLAGS := -Iinc -MMD -MP
+CFLAGS := -Wall
+LDFLAGS := -Llib
+LDLIBS :=
 
-cfetch: $(OBJ)
-	@$(CC) -o $@ $^ $(CFLAGS)
-	@echo "$(colour_green)CC $(colour_reset)$^"
+.PHONY: all clean
 
-.PHONY: clean
+all: $(EXE)
+
+$(EXE): $(OBJ) | $(BIN_DIR)
+	$(CC) $(LDFLAGS) $^ $(LDLIBS) -o $@
+
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c | $(OBJ_DIR)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+$(BIN_DIR) $(OBJ_DIR):
+	mkdir -p $@
 
 clean:
-	@rm -f ./src/*.o ./cfetch
-	@echo "Cleaned"
+	@$(RM) -rv $(EXE) $(OBJ_DIR)
+
+-include $(OBJ:.o=.d)
