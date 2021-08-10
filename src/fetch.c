@@ -11,6 +11,8 @@
 #define SECONDS_HOUR 3600
 #define SECONDS_DAY 86400
 
+#define COLOUR_RESET "\e[0m"
+
 void fetch_kernel(char *buffer, size_t buffer_size) {
 	struct utsname local_machine;
 	uname(&local_machine);
@@ -27,6 +29,14 @@ void fetch_distro(char *buffer, size_t buffer_size) {
 	FILE *distroinfo = fopen("/etc/os-release", "rb");
 	osParse(distroinfo, buffer, "PRETTY_NAME");
 	fclose(distroinfo);
+}
+
+void fetch_colourblocks(char *buffer, size_t buffer_size) {
+	size_t offset = 0;
+	for (int i = 0; i < 8; i++) {
+		offset += sprintf(buffer + offset, "\e[%dm\e[%dm   ", i + 30, i + 40);
+	}
+	offset += sprintf(buffer + offset, "%s", COLOUR_RESET);
 }
 
 void fetch_colour(char *buffer, size_t buffer_size) {

@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "fetch.h"
 
-#define BUFFER_SIZE 64
+#define BUFFER_SIZE 128
 #define COLOUR_RESET "\e[0m"
 
 int main(int argc, char *argv[]) {
@@ -49,4 +49,6 @@ int main(int argc, char *argv[]) {
 		if(useIcons) printf("%s%s%s ", colour, fetcharray[i].icon, COLOUR_RESET);
 		printf("%s%s%s%s%s\n", colour, fetcharray[i].title, COLOUR_RESET, SEPARATOR, buffer);
 	}
+	fetch_colourblocks(buffer, sizeof(buffer) / sizeof(char));
+	printf("%s\n", buffer);
 }

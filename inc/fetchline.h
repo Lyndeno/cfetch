@@ -11,4 +11,4 @@ typedef struct fetchlist {
 	void (*fetchfunc)(char *, size_t);
 } fetchlist;
 
-void align_fetchlist(fetchlist *fetcharray, size_t count);
+size_t align_fetchlist(fetchlist *fetcharray, size_t count);

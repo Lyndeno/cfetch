@@ -1,7 +1,7 @@
 #include "fetchline.h"
 #include <stdio.h>
 
-void align_fetchlist(fetchlist *fetcharray, size_t count) {
+size_t align_fetchlist(fetchlist *fetcharray, size_t count) {
 	size_t max_length = 0;
 	size_t current_length;
 	// We assume that the given title won't be over half the maximum, ideally I would do something smarter here.
@@ -28,4 +28,5 @@ void align_fetchlist(fetchlist *fetcharray, size_t count) {
 			sprintf(fetcharray[i].title, "%s%s", padding, buffer);
 		}
 	}
+	return max_length;
 }
