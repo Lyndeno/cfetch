@@ -1,7 +1,7 @@
 #include "fetchline.h"
 #include <stdio.h>
 
-size_t align_fetchlist(fetchlist *fetcharray, size_t count) {
+size_t align_fetchlist(fetchlist *fetcharray, const size_t count) {
 	size_t max_length = 0;
 	size_t current_length;
 	// We assume that the given title won't be over half the maximum, ideally I would do something smarter here.
@@ -10,9 +10,7 @@ size_t align_fetchlist(fetchlist *fetcharray, size_t count) {
 
 	for (size_t i = 0; i < count; i++) {
 		current_length = strlen(fetcharray[i].title);
-		if (current_length > max_length) {
-			max_length = current_length;
-		}
+		max_length = (current_length > max_length) ? current_length : max_length;
 	}
 	for (size_t i = 0; i < count; i++) {
 		current_length = strlen(fetcharray[i].title);

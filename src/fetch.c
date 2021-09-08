@@ -13,25 +13,25 @@
 
 #define COLOUR_RESET "\e[0m"
 
-void fetch_kernel(char *buffer, size_t buffer_size) {
+void fetch_kernel(char *buffer, const size_t buffer_size) {
 	struct utsname local_machine;
 	uname(&local_machine);
 	sprintf(buffer ,"%s %s", local_machine.sysname, local_machine.release );
 }
 
-void fetch_architecture(char *buffer, size_t buffer_size) {
+void fetch_architecture(char *buffer, const size_t buffer_size) {
 	struct utsname local_machine;
 	uname(&local_machine);
 	sprintf(buffer, "%s", local_machine.machine);
 }
 
-void fetch_distro(char *buffer, size_t buffer_size) {
+void fetch_distro(char *buffer, const size_t buffer_size) {
 	FILE *distroinfo = fopen("/etc/os-release", "rb");
 	osParse(distroinfo, buffer, "PRETTY_NAME");
 	fclose(distroinfo);
 }
 
-void fetch_colourblocks(char *buffer, size_t buffer_size) {
+void fetch_colourblocks(char *buffer, const size_t buffer_size) {
 	size_t offset = 0;
 	for (int i = 0; i < 8; i++) {
 		offset += sprintf(buffer + offset, "\e[%dm\e[%dm   ", i + 30, i + 40);
@@ -39,7 +39,7 @@ void fetch_colourblocks(char *buffer, size_t buffer_size) {
 	offset += sprintf(buffer + offset, "%s", COLOUR_RESET);
 }
 
-void fetch_colour(char *buffer, size_t buffer_size) {
+void fetch_colour(char *buffer, const size_t buffer_size) {
 	FILE *distroinfo = fopen("/etc/os-release", "rb");
 	strcpy(buffer, "\e[");
 	osParse(distroinfo, buffer + strlen(buffer), "ANSI_COLOR");
@@ -49,11 +49,11 @@ void fetch_colour(char *buffer, size_t buffer_size) {
 	fclose(distroinfo);
 }
 
-void fetch_hostname(char *buffer, size_t buffer_size) {
+void fetch_hostname(char *buffer, const size_t buffer_size) {
 	gethostname(buffer, buffer_size);
 }
 
-void fetch_uptime(char *buffer, size_t buffer_size) {
+void fetch_uptime(char *buffer, const size_t buffer_size) {
 	struct sysinfo machine_info;
 	sysinfo(&machine_info);
 
@@ -84,13 +84,13 @@ void fetch_uptime(char *buffer, size_t buffer_size) {
 	sprintf(buffer + bytes_written, "%ld second%s", uptime_seconds, plurality);
 }
 
-void fetch_cpumodel(char *buffer, size_t buffer_size) {
+void fetch_cpumodel(char *buffer, const size_t buffer_size) {
 	FILE *cpuinfo = fopen("/proc/cpuinfo", "rb");
 	procParse(cpuinfo, buffer, "model name");
 	fclose(cpuinfo);
 }
 
-void fetch_memory(char *buffer, size_t buffer_size) {
+void fetch_memory(char *buffer, const size_t buffer_size) {
 	FILE *meminfo = fopen("/proc/meminfo", "rb");
 	// TODO: CHange these arbitrary values to something a little more known
 	char memtotal[16]; procParse(meminfo, memtotal, "MemTotal");
@@ -102,7 +102,7 @@ void fetch_memory(char *buffer, size_t buffer_size) {
 	fclose(meminfo);
 }
 
-void fetch_model(char *buffer, size_t buffer_size) {
+void fetch_model(char *buffer, const size_t buffer_size) {
 	FILE *model = fopen("/sys/devices/virtual/dmi/id/product_name", "rb");	
 	char *modelname = readFirstline(model);
 	strcpy(buffer, modelname);
