@@ -33,8 +33,15 @@ void fetch_distro(char *buffer, const size_t buffer_size) {
 
 void fetch_colourblocks(char *buffer, const size_t buffer_size) {
 	size_t offset = 0;
-	for (int i = 0; i < 8; i++) {
-		offset += sprintf(buffer + offset, "\e[%dm\e[%dm   ", i + 30, i + 40);
+	for (int i = 0; i < 16; i++) {
+		if (i == 8) {
+			offset += sprintf(buffer + offset, "%s\n", COLOUR_RESET);
+		}
+		if (i < 8) {
+			offset += sprintf(buffer + offset, "\e[%dm\e[%dm   ", i + 30, i + 40);
+		} else {
+			offset += sprintf(buffer + offset, "\e[38;5;%dm\e[48;5;%dm   ", i, i);
+		}
 	}
 	offset += sprintf(buffer + offset, "%s", COLOUR_RESET);
 }

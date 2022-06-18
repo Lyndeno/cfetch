@@ -5,7 +5,7 @@
 #include <stdbool.h>
 #include "fetch.h"
 
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 512
 #define COLOUR_RESET "\e[0m"
 
 int main(int argc, char *argv[]) {
