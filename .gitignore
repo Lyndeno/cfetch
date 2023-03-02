@@ -1,3 +1,5 @@
 *.o
 cfetch
 obj/
+.cache/
+compile_commands.json
