@@ -111,8 +111,11 @@ void fetch_memory(char *buffer, const size_t buffer_size) {
 
 void fetch_model(char *buffer, const size_t buffer_size) {
 	FILE *model = fopen("/sys/devices/virtual/dmi/id/product_name", "rb");	
-	char *modelname = readFirstline(model);
-	strcpy(buffer, modelname);
-	free(modelname);
-	fclose(model);
+	if (model != NULL) {char *modelname = readFirstline(model);
+		strcpy(buffer, modelname);
+		free(modelname);
+		fclose(model);
+	} else {
+		sprintf(buffer, "");
+	};
 }
