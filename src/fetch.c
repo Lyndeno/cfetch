@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "fetchline.h"
 
 #define SECONDS_MIN 60
 #define SECONDS_HOUR 3600
@@ -31,11 +32,16 @@ void fetch_distro(char *buffer, const size_t buffer_size) {
 	fclose(distroinfo);
 }
 
-void fetch_colourblocks(char *buffer, const size_t buffer_size) {
+void fetch_colourblocks(size_t indent, char *buffer, const size_t buffer_size) {
 	size_t offset = 0;
 	for (int i = 0; i < 16; i++) {
 		if (i == 8) {
 			offset += sprintf(buffer + offset, "%s\n", COLOUR_RESET);
+		}
+		if (i == 0 || i == 8) {
+			for (int j = 0; j < indent + strlen(SEPARATOR); j++) {
+				offset += sprintf(buffer + offset, " ");
+			}
 		}
 		if (i < 8) {
 			offset += sprintf(buffer + offset, "\e[%dm\e[%dm   ", i + 30, i + 40);

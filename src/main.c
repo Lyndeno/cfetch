@@ -37,11 +37,12 @@ int main(int argc, char *argv[]) {
 
 	char buffer[BUFFER_SIZE];
 	char colour[32];
+	size_t indent;
 
 	if (useColours) fetch_colour(colour, sizeof(colour)/sizeof(char));
 	else colour[0] = '\0';
 
-	align_fetchlist(fetcharray, sizeof(fetcharray) / sizeof(fetchlist));
+	indent = align_fetchlist(fetcharray, sizeof(fetcharray) / sizeof(fetchlist));
 
 	for (size_t i = 0; i < sizeof(fetcharray) / sizeof(fetchlist); i++) {
 		fetcharray[i].fetchfunc(buffer, sizeof(buffer)/sizeof(char));
@@ -49,6 +50,6 @@ int main(int argc, char *argv[]) {
 		if(useIcons) printf("%s%s%s ", colour, fetcharray[i].icon, COLOUR_RESET);
 		printf("%s%s%s%s%s\n", colour, fetcharray[i].title, COLOUR_RESET, SEPARATOR, buffer);
 	}
-	fetch_colourblocks(buffer, sizeof(buffer) / sizeof(char));
+	fetch_colourblocks(indent, buffer, sizeof(buffer) / sizeof(char));
 	printf("%s\n", buffer);
 }
