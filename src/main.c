@@ -45,6 +45,7 @@ int main(int argc, char *argv[]) {
 	indent = align_fetchlist(fetcharray, sizeof(fetcharray) / sizeof(fetchlist));
 
 	for (size_t i = 0; i < sizeof(fetcharray) / sizeof(fetchlist); i++) {
+		buffer[0] = '\0';
 		fetcharray[i].fetchfunc(buffer, sizeof(buffer)/sizeof(char));
 
 		if(useIcons) printf("%s%s%s ", colour, fetcharray[i].icon, COLOUR_RESET);
